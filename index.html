@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73302530-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73302530-1');
+</script>
+    <title>Interactive Teaching Goal Inventory (Angelo &amp; Cross, 1998)</title>
+<style>
+@import "tgi_styles.css";
+</style>
+    
+<script src="goals_array.js"></script>
+<script src="techniques.js"></script>
+
+</head>
+<body>
+<h1>Interactive Teaching Goal Inventory (ITGI) v.1.0</h1>
+        <p>This form is designed to be used in conjuction with Classroom Assessment Techniques: A Handbook for College Teachers, 2nd. ed. (Angelo &amp; Cross, 1993) (<a href="http://www.amazon.com/Classroom-Assessment-Techniques-Handbook-Teachers/dp/1555425003/ref=sr_1_1?ie=UTF8&qid=1424899370&sr=8-1&keywords=Classroom+Assessment+Techniques%3A+A+Handbook+for+College+Teachers" target="_blank">paperback</a>)</p>
+    
+<p>The ITGI aims to help college teachers identify and clarify their teaching goals and assessments for a particular class.  This online version of the survey has been created for three reasons: (1) Simplify scoring, (2) provide you with the particular assessments that support priority categories of goals, and (3) to make it easier to identify assessments that address a particular goal. The critical thing to keep in mind is that all of these are worthy goals and will be essential in some classes.  The challenge is to identify what is so important TO YOU for THIS PARTICULAR COURSE, that you will deliberately design instruction to meet it and aim to measure instructional impact.</p>
+
+
+<p style="margin-left:36px;">
+<em>Essential</em> - a goal you <em>always/nearly always try to achieve and assess</em> in this course</br>
+<em>Very Important</em> - a goal you often try to achieve, but may or may not assess in this course</br>
+<em>Important</em> - a goal you sometimes try to achieve in this course</br>
+<em>Unimportant</em> - a goal you rarely try to achieve in this course</br>
+<em>Not Applicable</em> - a goal you never try to achieve in this course</p>
+
+<p>Rate the goals for your target course, then click the Analyze button to identify priority categories. You may change your rankings for any items and then use "Analyze" again to explore goals and CATs in more depth. To completely reset the form, use the reset button.</p>
+
+<p>After fine-tuning to your satisfaction, you may print the form to PDF to save your selections.</p>
+    
+<script type='text/javascript'>
+
+function goalWriter(i) {
+    goals.sort(function(a, b){return a[1] - b[1]});
+document.write("<table><tr><td valign=\'top\'><select onchange='turnEssentialsRed(this, this.parentElement)' class='survey' name=\'" + goals[i][1] + "\'>" +
+			"<option value=\'1\'>Not Applicable</option>" +
+			"<option value=\'2\'>Not Important</option>" +
+			"<option value=\'3\'>Important</option>" +
+			"<option value=\'4\'>Very Important</option>" +
+			"<option value=\'5\'>Essential</option>" +
+			"</select></td><td valign=\'top\'>" + goals[i][1] + ". " +  goals[i][2] + "</td></tr></table>");
+
+}
+
+var arEssential = new Array();
+var arVeryImportant = new Array();
+var arImportant = new Array();
+var arNotImportant = new Array();
+var arNotApplicable = new Array();
+var clusterInfo = new Array();
+    
+var c1;
+var c2;
+var c3;
+var c4;
+var c5;
+var c6;
+    
+function clearClustersAndGoals(f) {
+    document.getElementById("clusterAverages").innerHTML = " ";
+    document.getElementById("essentialGoals").innerHTML = " ";
+    document.getElementById("goalCats").innerHTML = " ";
+    document.getElementById("priorityClusterCats").innerHTML = " ";
+    
+    var arSelects = f.getElementsByClassName("survey");
+    for (i=0; i < arSelects.length; i++) {
+        arSelects[i].style.backgroundColor = "#ffffff";
+    } 
+}
+
+function turnEssentialsRed(e) {
+    var f = Number(e.value);
+    switch(f) {
+            case 5: 
+                e.style.backgroundColor = "#ff3333";
+                break;
+            case 4:
+                e.style.backgroundColor = "#ff9933";
+                break;
+            case 3:
+                e.style.backgroundColor = "#ffff66";
+                break;
+            case 2:
+                e.style.backgroundColor = "#ccccff";
+                break;
+            case 1:
+                e.style.backgroundColor = "#cccccc";
+                break;
+    }
+            
+    
+    /*  if(e.value == 5) {
+        pe.style.backgroundColor = "#ff3333";
+    }*/
+    
+}
+function analyze(form) {
+    // clear all the arrays and form output elements
+    arEssential.length = 0;
+	arVeryImportant.length = 0;
+	arImportant.length = 0;
+	arNotImportant.length = 0;
+	arNotApplicable.length = 0;
+	clusterInfo.length = 0;
+    document.getElementById("clusterAverages").innerHTML = "";
+    document.getElementById("essentialGoals").innerHTML = "";
+
+
+    // find essential goals and create radio button for them
+    for(i = 0; i < form.length - 1; i++) {
+        var name = Number(form.elements[i].name);
+        var value = form.elements[i].value;
+        var cat = clusterLookup(name);
+        var desc = descLookup(name);
+        clusterInfo.push([cat, name, value, desc]);
+    }
+    clusterInfo.sort(function(a, b){return a[1] - b[1]});
+
+    for(i = 0; i < clusterInfo.length; i++) {
+        if(clusterInfo[i][2] == 5) {
+            document.getElementById("essentialGoals").innerHTML += "<input type='radio' name='goal' + onchange='whichCats(this.value) ' + value='" + 
+                clusterInfo[i][1] + "'>" + clusterInfo[i][1] +". " + clusterInfo[i][3] + "</br>";
+        }
+    }
+
+    c1a = Math.round(computeCat(1) / 8);
+    c1 = c1a.toString();
+    c2a = Math.round(computeCat(2) / 9);
+    c2 = c2a.toString();
+    c3a = Math.round(computeCat(3) / 8);
+    c3 = c3a.toString();
+    c4a = Math.round(computeCat(4) / 10);
+    c4 = c4a.toString();
+    c5a = Math.round(computeCat(5) / 8);
+    c5 = c5a.toString();
+    c6a = Math.round(computeCat(6) / 9);
+    c6 = c6a.toString();
+    
+   priorityClusters();
+}
+
+function computeCat(cat) {
+    var sum = 0;
+    for (i = 0; i < clusterInfo.length; i++) {
+        if (clusterInfo[i][0] == cat) {
+            sum += parseInt(clusterInfo[i][2], 10);
+        }
+    }
+    return(sum);
+}
+
+function clusterLookup(name) {
+	for(i = 0; i < goals.length; i++) {
+		if (name == goals[i][1]) {
+			return(goals[i][0]);
+			break;
+		}
+	}
+}
+
+function descLookup(name) {
+    for(i = 0; i < goals.length; i++) {
+		if (name == goals[i][1]) {
+			return(goals[i][2]);
+			break;
+		}
+	}
+}
+    
+function priorityClusters() {
+    // puts the cluster scores in an array, sorts them from high to low, then finds
+    // the CATs that support both of the top two identified. If there is not a CAT
+    // that addresses both of them, it gives the CATs for the top priority cluster
+    var clusters = [["Higher Order Thinking Skills", c1a, 3], 
+                    ["Basic Academic Success Skills", c2a, 4],
+                    ["Discipline-Specific Knowledge and Skills", c3a, 5],
+                    ["Liberal Arts and Academic Values", c4a, 6],
+                    ["Work and Career Preparation", c5a, 7],
+                    ["Personal Development", c6a, 8]
+                   ];
+    clusters.sort(function(a, b){return b[1] - a[1]});
+    document.getElementById("clusterAverages").innerHTML = " ";
+    
+    for (i = 0; i < clusters.length; i++) {
+        document.getElementById("clusterAverages").innerHTML += clusters[i][0] + "</br>";
+    }
+    
+    // send the top two (clusters[0] and clusters[1] and look up all the CATS where there is a '1' in the referenced indexes.  
+    var a = clusters[0][2];
+    var b = clusters[1][2];
+    var cats = "<ol>";
+    
+    for (i=0; i < arTechniques.length; i++) {
+        if (arTechniques[i][a] == 1 && arTechniques[i][b] == 1) {
+            cats += "<li>" + arTechniques[i][1] + " (CAT " + arTechniques[i][0] + " - p. " + arTechniques[i][2] + ")</li>";
+            //break;
+        } 
+    } 
+    document.getElementById("priorityClusterCats").innerHTML = cats + "</ol>";     
+}
+
+// Looks up all the CATs that assess a particular goal
+function whichCats(goal) {
+    var g = Number(goal);
+    var cats = "<ol>";
+        
+    for(i = 0; i < arTechniques.length; i++ ) {
+        if(arTechniques[i][9].indexOf(g) > -1) {
+            cats += "<li>" + arTechniques[i][1] + " (CAT " + arTechniques[i][0] + " - p. " + arTechniques[i][2] + ")</li>";
+        }
+    }
+        
+    document.getElementById("goalCats").innerHTML = cats + "</ol>";
+    
+}
+
+// Builds the TGI survey form    
+document.write("<form name=\'tgi\' onreset=\'clearClustersAndGoals(this)\'>");
+document.write("<table><tr><td valign=\'top\'>");     
+	for(i = 0; i < goals.length; i++) {
+		if(i < 25) {
+			goalWriter(i);
+		} else if(i === 25) {
+			goalWriter(i);
+			document.write("</td><td valign=\'top\'>");
+		} else {
+			goalWriter(i);
+		}
+	}
+document.write("</td></tr></table>");
+document.write("<div class=\'divider\'><button type=\'button\' name=\'Analyze\' onClick=\'analyze(this.form)\'>Analyze</button><button type=\'reset\'>Reset</button></div></form>");
+</script>
+
+<h2>Analysis</h2>
+<p>In this section of the form, the aim is to help you identify priority categories of goals and the assessments that may be appropriate for more than one category. Additionally, you may examine the goals you marked as "essential" and explore which CATs are specific to that goal.</p>
+
+<h3>Ranked Goal Categories</h3>
+        <p id="clusterAverages"></p>
+
+<h3>CATs addressing the top two categories</h3>
+        <p id="priorityClusterCats"></p>
+
+ <h3>Your Essential Goals</h3>
+            <p id="essentialGoals" width="200px"></div>
+
+<h3>CATs specifically related to an essential goal</h3>
+        <p id="goalCats"></p>
+
+<div style="width: 100%; background-color: #ffffcc; text-align:right;"><form><input type='button' value='Print this page' onClick='window.print()'></inp></form></div>
+
+
+<p class="credits">
+    Author: Sydney E. Brown, PhD., <a href="http://directory.unl.edu/" target="_blank">University of Nebraska-Lincoln</a>, last updated 2/28/2015
+</p>
+</body>
+</html>
+
+
+
+
+
+
+
